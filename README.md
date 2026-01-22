@@ -1,53 +1,57 @@
 # Kahoot Quiz Architect ✨
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gemini-kahoot.streamlit.app/)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![Gemini](https://img.shields.io/badge/AI-Gemini_1.5-8E75B2?logo=google&logoColor=white)
 
-> Transform your PDFs into engaging Kahoot quizzes with the power of Google Gemini AI!
+> **Transform your PDF study materials into engaging Kahoot games in seconds using Google Gemini AI.**
 
-## About 📄
+---
 
-Kahoot Quiz Architect is a cutting-edge web application built with Streamlit that streamlines the quiz creation process. Simply upload your PDF documents, and let the integrated Google Gemini 1.5 Pro AI analyze the content, generate intelligent multiple-choice questions, and prepare them in a Kahoot-ready Excel format. Perfect for educators, trainers, and anyone looking to quickly create interactive learning experiences.
+## 📖 About
 
-## Key Features 🚀
+**Kahoot Quiz Architect** is a modern web application designed for educators, students, and trainers. It streamlines the tedious process of creating quizzes by automating the extraction of knowledge from PDFs and formatting it into ready-to-play Kahoot games.
 
-* **PDF Content Extraction**: Seamlessly extracts text from your uploaded PDF documents.
-* **AI Question Generation**: Leverages Google Gemini 1.5 Pro to intelligently generate quiz questions and answers.
-* **Smart YouTube Search**: Automatically finds relevant educational videos for kids based on your PDF content.
-* **Customizable Questions**: Specify the exact number of questions you want the AI to generate.
-* **Multi-language Output**: Choose your desired quiz output language (English, Polish, Spanish, German, French), irrespective of the source PDF's language.
-* **Editable Quiz Table**: Review and refine AI-generated questions and answers directly within an interactive table before export.
-* **Kahoot-Ready Excel Export**: Download your finalized quiz in a `.xlsx` format, perfectly structured for direct import into Kahoot.
-* **Secure API Handling**: Integrates securely with the Gemini API Key, keeping your credentials safe.
+Powered by the **Google GenAI SDK** and **Gemini 1.5 models**, this tool ensures high-quality, context-aware questions in multiple languages.
 
-## Tech Stack 🛠️
+## 🚀 Key Features
 
-* <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white">
-* <img alt="Streamlit" src="https://img.shields.io/badge/Streamlit-App-red?style=for-the-badge&logo=streamlit&logoColor=white">
-* <img alt="Google Gemini" src="https://img.shields.io/badge/Google_Gemini-1.5_Pro-green?style=for-the-badge&logo=google&logoColor=white">
-* `pypdf`
-* `openpyxl`
-* `Youtube`
-* `google-genai`
+* **📄 Instant PDF Extraction**: Drag and drop your textbooks, slide decks, or notes to instantly extract text content.
+* **🧠 Intelligent AI Generation**: Uses **Gemini 1.5 Flash** (for speed) or **Pro** (for depth) to craft relevant multiple-choice questions.
+* **🌍 Multi-Language Support**: Generate quizzes in **English, Polish, Spanish, German, or French**, regardless of the source PDF's language.
+* **✏️ Interactive Quiz Editor**: Review the AI-generated questions in a spreadsheet-like editor. Fix typos, adjust time limits, or change answers *before* downloading.
+* **🔢 Customizable Scope**: You decide the length of the quiz (from 1 to 50 questions).
+* **⚡️ Kahoot-Ready Export**: One-click download of an `.xlsx` file formatted specifically for Kahoot's "Import from spreadsheet" feature.
+* **🔒 Privacy First**: Your API Key is used strictly for the session and is never stored.
 
-## Getting Started 🏁
+## 🛠️ Tech Stack
 
-Follow these steps to get your Kahoot Quiz Architect up and running locally:
+* **Framework**: [Streamlit](https://streamlit.io/)
+* **AI Model**: Google Gemini 1.5 (via `google-genai` SDK)
+* **PDF Processing**: `pypdf`
+* **Data Handling**: `pandas` & `openpyxl`
+* **Deployment**: Streamlit Community Cloud
 
-1.  **Clone the repository:**
+## 🏁 Getting Started
+
+### Prerequisites
+* Python 3.10 or higher.
+* A **Google Gemini API Key** (Get it free at [Google AI Studio](https://aistudio.google.com/)).
+
+### Installation
+
+1.  **Clone the repository**
     ```bash
-    git clone [https://github.com/your-username/kahoot-quiz-architect.git](https://github.com/your-username/kahoot-quiz-architect.git)
-    cd kahoot-quiz-architect
+    git clone [https://github.com/vityk-dev/GEMINI-Kahoot-generator.git](https://github.com/vityk-dev/GEMINI-Kahoot-generator.git)
+    cd GEMINI-Kahoot-generator
     ```
 
-2.  **Install dependencies:**
-    We recommend using **uv** for lightning-fast installation, but standard pip works too.
+2.  **Install Dependencies**
+    We recommend using **uv** for lightning-fast setup, but standard pip works fine.
 
-    **Option A: Using uv (Recommended ⚡️)**
+    **Option A: Using uv (Fast ⚡️)**
     ```bash
-    # 1. Install uv
     pip install uv
-
-    # 2. Create a virtual environment and install packages in milliseconds
     uv venv
     source .venv/bin/activate  # On Windows: .venv\Scripts\activate
     uv pip install -r requirements.txt
@@ -60,20 +64,33 @@ Follow these steps to get your Kahoot Quiz Architect up and running locally:
     pip install -r requirements.txt
     ```
 
-3.  **Run the application:**
+3.  **Check for Template**
+    Ensure the file `KahootQuizTemplate.xlsx` is present in the main project folder. This is required for the Excel export to work.
+
+4.  **Run the App**
     ```bash
     streamlit run app.py
     ```
-    This will open the application in your web browser.
 
-**Important:** You will need your own Google Gemini API Key. Obtain one from the [Google AI Studio](https://ai.google.dev/). Enter this key into the sidebar of the application to enable AI functionalities.
+## 💡 How to Use
 
-## Live Demo 🌐
+1.  **Enter Credentials**: Paste your Gemini API Key in the sidebar.
+2.  **Configure**:
+    * Select a Model (Flash is faster, Pro is smarter).
+    * Choose the **Output Language** (e.g., Polish).
+    * Set the desired **Number of Questions**.
+3.  **Upload**: Upload your PDF file.
+4.  **Generate**: Click the **Generate Quiz** button.
+5.  **Review**: Use the table editor to tweak any questions if needed.
+6.  **Download**: Click **Download Kahoot Quiz** to save the Excel file.
+7.  **Play**: Go to [create.kahoot.it](https://create.kahoot.it/), create a new Kahoot, and select **"Add question" -> "Import from spreadsheet"**.
 
-Try the application live on Streamlit Community Cloud:
+## 🌐 Live Demo
 
-[👉 **Click here to launch Kahoot Quiz Architect**](https://gemini-kahoot.streamlit.app/)
+You can try the application without installing anything here:
 
-## Author ✍️
+[👉 **Launch Kahoot Quiz Architect**](https://gemini-kahoot.streamlit.app/)
+
+## ✍️ Author
 
 Created by **Wiktor Goszczyński**

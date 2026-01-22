@@ -2,7 +2,7 @@ import os
 import streamlit as st
 import pypdf
 import io
-import google.generativeai as genai
+import google.genai as genai
 import json
 from dotenv import load_dotenv
 
@@ -43,6 +43,8 @@ if uploaded_file is not None:
         if st.button("Generate Quiz"):
             genai.configure(api_key=api_key)
             
+            # The model name should be 'gemini-1.5-pro' as per the spec,
+            # but using 'models/gemini-2.5-pro' based on available models list.
             model = genai.GenerativeModel('models/gemini-2.5-pro')
             
             prompt = f"""
@@ -60,7 +62,7 @@ if uploaded_file is not None:
                 - The 'question' must be a maximum of 120 characters.
                 - Each answer ('answer1', 'answer2', 'answer3', 'answer4') must be a maximum of 75 characters.
             4.  **Time Limit:** The 'time_limit' must be one of the following integers: 10, 20, 30, 60.
-            5.  **Correct Answer:** The 'correct_answer' must be an integer from 1 to 4, corresponding to the correct answer.
+            5.  **Correct Answer:** The 'correct_answer' MUST be an integer (1, 2, 3, or 4), strictly indicating the index of the correct answer among answer1, answer2, answer3, or answer4.
             6.  **Output Format:** Your final output must be a single, valid JSON array of objects. Do not include any text or formatting before or after the JSON array. Each object in the array should represent a single quiz question and must follow this exact schema:
                 {{
                   "question": "Your question here",
@@ -91,6 +93,8 @@ if uploaded_file is not None:
             with st.spinner("Generating quiz..."):
                 response = model.generate_content(prompt)
                 
+                st.text_area("Raw AI Response", response.text, height=300) # Temporary for debugging
+                
                 try:
                     # Clean the response to get only the JSON part
                     json_response = response.text.strip().replace("```json", "").replace("```", "")
@@ -104,10 +108,10 @@ if uploaded_file is not None:
 
                 except json.JSONDecodeError:
                     st.error("Failed to parse the quiz data from the AI's response. The response was not valid JSON.")
-                    st.text_area("Raw Response from AI", response.text)
+                    st.text_area("Raw Response from AI (for review)", response.text) # Keep raw for failed parsing
                 except Exception as e:
                     st.error(f"An unexpected error occurred: {e}")
-                    st.text_area("Raw Response from AI", response.text)
+                    st.text_area("Raw Response from AI (for review)", response.text) # Keep raw for unexpected errors
 
     else:
         st.warning("Please enter your Gemini API Key in the sidebar to generate the quiz.")

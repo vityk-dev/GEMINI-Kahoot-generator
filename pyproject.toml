@@ -7,7 +7,7 @@ requires-python = ">=3.8"
 dependencies = [
     "streamlit",
     "pypdf",
-    "google-generativeai",
+    "google-genai",
     "openpyxl",
     "pandas",
     "python-dotenv",

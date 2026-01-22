@@ -24,12 +24,10 @@ if uploaded_file is not None:
     
     if api_key: # Check if API key is provided in the input field
         if st.button("Generate Quiz"):
-            # The genai.configure() method is not available in google.genai.
-            # Pass the API key directly to the GenerativeModel constructor.
-            model = genai.GenerativeModel('models/gemini-2.5-pro', api_key=api_key)
+            # Initialize the client first
+            client = genai.Client(api_key=api_key)
             
             prompt = f"""
-            
             You are an expert in creating engaging quizzes. Based on the following text from a PDF document, please generate a series of 5-10 multiple-choice quiz questions.
 
             **Text to analyze:**
@@ -47,13 +45,13 @@ if uploaded_file is not None:
             5.  **Correct Answer:** The 'correct_answer' MUST be an integer (1, 2, 3, or 4), strictly indicating the index of the correct answer among answer1, answer2, answer3, or answer4.
             6.  **Output Format:** Your final output must be a single, valid JSON array of objects. Do not include any text or formatting before or after the JSON array. Each object in the array should represent a single quiz question and must follow this exact schema:
                 {{
-                  "question": "Your question here",
-                  "answer1": "First possible answer",
-                  "answer2": "Second possible answer",
-                  "answer3": "Third possible answer",
-                  "answer4": "Fourth possible answer",
+                  "question": "What is the capital of France?",
+                  "answer1": "Berlin",
+                  "answer2": "Madrid",
+                  "answer3": "Paris",
+                  "answer4": "Rome",
                   "time_limit": 20,
-                  "correct_answer": 1
+                  "correct_answer": 3
                 }}
 
             **Example Output:**
@@ -73,7 +71,10 @@ if uploaded_file is not None:
             """
             
             with st.spinner("Generating quiz..."):
-                response = model.generate_content(prompt)
+                response = client.models.generate_content(
+                    model='models/gemini-2.5-pro', 
+                    contents=prompt
+                )
                 
                 st.text_area("Raw AI Response", response.text, height=300) # Temporary for debugging
                 

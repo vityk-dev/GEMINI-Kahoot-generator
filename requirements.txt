@@ -1,5 +1,0 @@
-streamlit
-google-genai
-pypdf
-openpyxl
-youtube-search

@@ -1,0 +1,17 @@
+[project]
+name = "kahoot-quiz-generator"
+version = "0.1.0"
+description = "A Streamlit app to generate Kahoot quizzes from PDFs using the Gemini API."
+authors = [{ name = "Gemini", email = "no-reply@google.com" }]
+requires-python = ">=3.8"
+dependencies = [
+    "streamlit",
+    "google-generativeai",
+    "pypdf",
+    "openpyxl",
+    "python-dotenv",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

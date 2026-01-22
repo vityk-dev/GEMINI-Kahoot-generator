@@ -38,11 +38,28 @@ Follow these steps to get your Kahoot Quiz Architect up and running locally:
     git clone [https://github.com/your-username/kahoot-quiz-architect.git](https://github.com/your-username/kahoot-quiz-architect.git)
     cd kahoot-quiz-architect
     ```
+
 2.  **Install dependencies:**
-    It's recommended to use a virtual environment.
+    We recommend using **uv** for lightning-fast installation, but standard pip works too.
+
+    **Option A: Using uv (Recommended ⚡️)**
     ```bash
+    # 1. Install uv
+    pip install uv
+
+    # 2. Create a virtual environment and install packages in milliseconds
+    uv venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    uv pip install -r requirements.txt
+    ```
+
+    **Option B: Standard pip**
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
     pip install -r requirements.txt
     ```
+
 3.  **Run the application:**
     ```bash
     streamlit run app.py

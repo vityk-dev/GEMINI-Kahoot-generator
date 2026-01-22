@@ -20,3 +20,5 @@ secrets.toml
 
 # OS-specific files
 .DS_Store
+.venv/
+*.pdf

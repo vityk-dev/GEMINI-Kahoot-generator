@@ -6,29 +6,11 @@ authors = [{ name = "Gemini", email = "no-reply@google.com" }]
 requires-python = ">=3.8"
 dependencies = [
     "streamlit",
-    "google-generativeai",
     "pypdf",
+    "google-generativeai",
     "openpyxl",
-    "python-dotenv",
-    "blinker",
-    "protobuf",
-    "typing-extensions",
-    "cachetools",
-    "click",
-    "tornado",
-    "toml",
-    "requests",
-    "urllib3",
-    "rich",
-    "altair",
     "pandas",
-    "numpy",
-    "watchdog",
-    "idna",
-    "chardet",
-    "charset-normalizer",
-    "certifi",
-    "packaging",
+    "python-dotenv",
 ]
 
 [build-system]

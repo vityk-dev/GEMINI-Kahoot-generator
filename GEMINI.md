@@ -59,3 +59,21 @@ Use a System Instruction or specialized prompt that emphasizes:
 - "Visual analysis of charts/diagrams on the slides."
 - "Creating challenging, higher-order thinking questions."
 - "Strict adherence to JSON output for programmatic parsing."
+
+## 9. File Parsing Specification (Kahoot Template)
+The output file MUST strictly follow the schema of "KahootQuizTemplate.xlsx - Sheet1.csv".
+
+**Technical Schema:**
+- **Header Row Index:** 7 (0-indexed). The first 7 rows are instructions and must be ignored during parsing or overwritten during export.
+- **Strict Column Names (Row 8):**
+  1. `Question - max 120 characters`
+  2. `Answer 1 - max 75 characters`
+  3. `Answer 2 - max 75 characters`
+  4. `Answer 3 - max 75 characters`
+  5. `Answer 4 - max 75 characters`
+  6. `Time limit (sec) – 5, 10, 20, 30, 60, 90, 120, or 240 secs`
+  7. `Correct answer(s) - choose at least one`
+
+**Data Rules:**
+- `Time Limit`: Allowed values are integers: 5, 10, 20, 30, 60, 90, 120, 240.
+- `Correct Answer`: Comma-separated integers (e.g., "1" or "2,3").

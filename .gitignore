@@ -9,5 +9,13 @@ __pycache__/
 venv/
 env/
 
+# Build artifacts
+build/
+kahoot_quiz_generator.egg-info/
+
+# Streamlit secrets and temporary files
+secrets.toml
+*.pdf
+
 # OS-specific files
 .DS_Store

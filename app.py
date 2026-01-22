@@ -1,15 +1,32 @@
+import os
 import streamlit as st
 import pypdf
 import io
 import google.generativeai as genai
-import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv() # Load environment variables
 
 st.title("Kahoot Quiz Generator")
 
-# Add a section for API Key
-st.sidebar.title("API Key")
-api_key = st.sidebar.text_input("Enter your Gemini API Key", type="password")
+# Retrieve API key based on deployment environment
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    try:
+        api_key = st.secrets["GEMINI_API_KEY"]
+    except Exception: # Catch any exception, including StreamlitSecretNotFoundError
+        pass
+
+# If not found in secrets or env, prompt user
+if not api_key:
+    st.sidebar.title("API Key")
+    api_key = st.sidebar.text_input("Enter your Gemini API Key", type="password")
+
+if not api_key:
+    st.error("Gemini API Key is required to proceed. Please enter it in the sidebar or configure it via st.secrets or .env file.")
+    st.stop() # Stop execution if API key is not available
 
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 

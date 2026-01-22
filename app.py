@@ -1,30 +1,78 @@
 import streamlit as st
 import pypdf
 import io
-import google.genai as genai
+from google import genai # Using the new SDK
 import os
 import json
+from openpyxl import load_workbook
 
 st.title("Kahoot Quiz Generator")
 
-# Add a section for API Key
+# --- 1. Sidebar Configuration ---
 st.sidebar.title("API Key")
 api_key = st.sidebar.text_input("Enter your Gemini API Key", type="password")
 
+# --- 2. Model Selection Logic (Updated for New SDK) ---
+display_models = []
+
+if api_key:
+    try:
+        # NEW SDK: Initialize Client to fetch models
+        client = genai.Client(api_key=api_key)
+        
+        # Fetch models using the new client structure
+        # We look for models that support 'generateContent'
+        all_models = client.models.list()
+        
+        for m in all_models:
+            # We filter for Gemini models that are likely text generators
+            if "gemini" in m.name and ("flash" in m.name or "pro" in m.name):
+                # Clean the name (remove "models/" prefix if present)
+                clean_name = m.name.replace("models/", "")
+                if clean_name not in display_models:
+                    display_models.append(clean_name)
+
+    except Exception as e:
+        # Silent fail or fallback if listing fails
+        pass
+
+# Fallback defaults if list is empty
+if not display_models:
+    display_models = ['gemini-1.5-flash', 'gemini-1.5-pro']
+
+# Set default selection
+default_index = 0
+if 'gemini-1.5-flash' in display_models:
+    default_index = display_models.index('gemini-1.5-flash')
+
+selected_model = st.sidebar.selectbox(
+    "Choose a Gemini Model",
+    display_models,
+    index=default_index
+)
+
+# --- 3. Main Application ---
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
 if uploaded_file is not None:
     st.write("File uploaded successfully!")
-    pdf_reader = pypdf.PdfReader(io.BytesIO(uploaded_file.read()))
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
     
-    st.text_area("Extracted Text", text, height=150)
+    # Read PDF
+    try:
+        pdf_reader = pypdf.PdfReader(io.BytesIO(uploaded_file.read()))
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+        st.text_area("Extracted Text", text, height=150)
+    except Exception as e:
+        st.error(f"Error extracting text: {e}")
+        text = ""
     
-    if api_key: # Check if API key is provided in the input field
+    if api_key: 
         if st.button("Generate Quiz"):
-            # Initialize the client first
+            # --- FIX STARTS HERE (New SDK Implementation) ---
+            
+            # 1. Initialize the Client (Replaces genai.configure)
             client = genai.Client(api_key=api_key)
             
             prompt = f"""
@@ -54,69 +102,56 @@ if uploaded_file is not None:
                   "correct_answer": 3
                 }}
 
-            **Example Output:**
-            [
-              {{
-                "question": "What is the capital of France?",
-                "answer1": "Berlin",
-                "answer2": "Madrid",
-                "answer3": "Paris",
-                "answer4": "Rome",
-                "time_limit": 20,
-                "correct_answer": 3
-              }}
-            ]
-
             Now, generate the quiz based on the provided text.
             """
             
             with st.spinner("Generating quiz..."):
-                response = client.models.generate_content(
-                    model='models/gemini-2.5-flash', 
-                    contents=prompt
-                )
-                
-                st.text_area("Raw AI Response", response.text, height=300) # Temporary for debugging
-                
                 try:
-                    # Clean the response to get only the JSON part
-                    json_response = response.text.strip().replace("```json", "").replace("```", "")
+                    # 2. Generate Content using the Client (Replaces model.generate_content)
+                    # Note: We pass 'model=' as an argument here
+                    response = client.models.generate_content(
+                        model=selected_model,
+                        contents=prompt
+                    )
+                    
+                    st.text_area("Raw AI Response", response.text, height=300) 
+                    
+                    # 3. Parse Response
+                    json_response = response.text.strip()
+                    # Remove markdown formatting if present
+                    if json_response.startswith("```json"):
+                        json_response = json_response[7:]
+                    if json_response.endswith("```"):
+                        json_response = json_response[:-3]
+                        
                     quiz_data = json.loads(json_response)
                     
                     st.subheader("Generated Quiz")
                     st.table(quiz_data)
                     
-                    # Store the generated data in the session state for later download
+                    # Store in session state
                     st.session_state.quiz_data = quiz_data
 
                 except json.JSONDecodeError:
-                    st.error("Failed to parse the quiz data from the AI's response. The response was not valid JSON.")
-                    st.text_area("Raw Response from AI (for review)", response.text) # Keep raw for failed parsing
+                    st.error("Failed to parse JSON. The AI might have included extra text.")
                 except Exception as e:
                     st.error(f"An unexpected error occurred: {e}")
-                    st.text_area("Raw Response from AI (for review)", response.text) # Keep raw for unexpected errors
 
     else:
         st.warning("Please enter your Gemini API Key in the sidebar to generate the quiz.")
 
-# Add a download button (it will be enabled once the quiz is generated)
+# --- 4. Download Section (Unchanged) ---
 if 'quiz_data' in st.session_state:
     st.subheader("Download Quiz")
     
-    # Use openpyxl to create the Excel file
-    from openpyxl import load_workbook
-    import io
-
-    # Load the template
     try:
         workbook = load_workbook("KahootQuizTemplate.xlsx")
         sheet = workbook.active
 
-        # Start writing from row 9 (index 8), as per the spec
         start_row = 9
         for i, question_data in enumerate(st.session_state.quiz_data):
             row = start_row + i
-            sheet[f"A{row}"] = i + 1  # Question Number
+            sheet[f"A{row}"] = i + 1  
             sheet[f"B{row}"] = question_data.get("question", "")
             sheet[f"C{row}"] = question_data.get("answer1", "")
             sheet[f"D{row}"] = question_data.get("answer2", "")
@@ -125,7 +160,6 @@ if 'quiz_data' in st.session_state:
             sheet[f"G{row}"] = question_data.get("time_limit", 20)
             sheet[f"H{row}"] = question_data.get("correct_answer", 1)
 
-        # Save the workbook to a BytesIO object
         excel_buffer = io.BytesIO()
         workbook.save(excel_buffer)
         excel_buffer.seek(0)
@@ -138,7 +172,6 @@ if 'quiz_data' in st.session_state:
         )
 
     except FileNotFoundError:
-        st.error("KahootQuizTemplate.xlsx not found. Please make sure the template file is in the same directory as the app.")
+        st.error("KahootQuizTemplate.xlsx not found.")
     except Exception as e:
-        st.error(f"An error occurred while creating the Excel file: {e}")
-
+        st.error(f"Excel Error: {e}")

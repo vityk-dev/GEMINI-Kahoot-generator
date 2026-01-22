@@ -142,11 +142,6 @@ if uploaded_file is not None:
                         json_response = json_response[:-3]
                         
                     quiz_data = json.loads(json_response)
-                    
-                    st.subheader("Generated Quiz")
-                    st.table(quiz_data)
-                    
-                    # Store in session state
                     st.session_state.quiz_data = quiz_data
 
                 except json.JSONDecodeError:
@@ -157,7 +152,13 @@ if uploaded_file is not None:
     else:
         st.warning("Please enter your Gemini API Key in the sidebar to generate the quiz.")
 
-# --- 4. Download Section (Unchanged) ---
+# --- 4. Display and Edit Quiz (New Section) ---
+if 'quiz_data' in st.session_state and st.session_state.quiz_data:
+    st.subheader("Generated Quiz")
+    edited_quiz_data = st.data_editor(st.session_state.quiz_data)
+    st.session_state.quiz_data = edited_quiz_data
+
+# --- 5. Download Section ---
 if 'quiz_data' in st.session_state:
     st.subheader("Download Quiz")
     

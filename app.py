@@ -51,6 +51,14 @@ selected_model = st.sidebar.selectbox(
     index=default_index
 )
 
+# Number of questions input
+num_questions = st.sidebar.number_input(
+    "Number of Questions", 
+    min_value=1, 
+    max_value=50, 
+    value=10
+)
+
 # --- 3. Main Application ---
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
@@ -76,7 +84,7 @@ if uploaded_file is not None:
             client = genai.Client(api_key=api_key)
             
             prompt = f"""
-            You are an expert in creating engaging quizzes. Based on the following text from a PDF document, please generate a series of 5-10 multiple-choice quiz questions.
+            You are an expert in creating engaging quizzes. Based on the following text from a PDF document, please generate a series of {num_questions} multiple-choice quiz questions.
 
             **Text to analyze:**
             ---
@@ -84,7 +92,8 @@ if uploaded_file is not None:
             ---
 
             **Instructions and Constraints:**
-            1.  **Analyze the text:** Read the provided text and create questions that test understanding of the key concepts.
+            1.  **Number of Questions:** You MUST generate exactly {num_questions} quiz questions.
+            2.  **Analyze the text:** Read the provided text and create questions that test understanding of the key concepts.
             2.  **Question Style:** Questions should be clear and concise.
             3.  **Character Limits:**
                 - The 'question' must be a maximum of 120 characters.

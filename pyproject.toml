@@ -49,13 +49,20 @@ dependencies = [
     "anyio",
     "sniffio",
     "httpx",
+    "httpcore",
     "distro",
     "tenacity",
     "websockets",
     "proto-plus",
     "httplib2",
     "pyparsing",
-    "uritemplate",
+    "httpcore",
+    "h11",
+    "pyarrow",
+    "pytz",
+    "python-dateutil",
+    "six",
+    "et_xmlfile",
 ]
 
 [build-system]

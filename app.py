@@ -7,14 +7,9 @@ import json
 
 st.title("Kahoot Quiz Generator")
 
-# Add a section for API Key instructions
-st.sidebar.title("API Key Configuration")
-st.sidebar.info(
-    "Please set your Gemini API Key as an environment variable named `GEMINI_API_KEY` "
-    "or use Streamlit's secrets management (`.streamlit/secrets.toml`).\n\n"
-    "Example for local environment variable:\n"
-    "`export GEMINI_API_KEY='YOUR_API_KEY'`"
-)
+# Add a section for API Key
+st.sidebar.title("API Key")
+api_key = st.sidebar.text_input("Enter your Gemini API Key", type="password")
 
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
@@ -27,15 +22,10 @@ if uploaded_file is not None:
     
     st.text_area("Extracted Text", text, height=150)
     
-    # Check if API Key is available from environment or secrets
-    # The genai library will automatically pick it up if set correctly.
-    # We still need to check if it's there before attempting to generate.
-    if os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY"):
+    if api_key: # Check if API key is provided in the input field
         if st.button("Generate Quiz"):
-            # genai.configure(api_key=api_key) # This line caused AttributeError
-            # The API key should be picked up automatically from the environment or st.secrets
-            
-            model = genai.GenerativeModel('models/gemini-2.5-pro')
+            # Pass the API key directly to the GenerativeModel constructor
+            model = genai.GenerativeModel('models/gemini-2.5-pro', api_key=api_key)
             
             prompt = f"""
             You are an expert in creating engaging quizzes. Based on the following text from a PDF document, please generate a series of 5-10 multiple-choice quiz questions.

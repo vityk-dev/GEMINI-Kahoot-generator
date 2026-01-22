@@ -42,7 +42,8 @@ if uploaded_file is not None:
     if api_key:
         if st.button("Generate Quiz"):
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-pro')
+            
+            model = genai.GenerativeModel('models/gemini-2.5-pro')
             
             prompt = f"""
             You are an expert in creating engaging quizzes. Based on the following text from a PDF document, please generate a series of 5-10 multiple-choice quiz questions.

@@ -3,7 +3,7 @@ name = "kahoot-quiz-generator"
 version = "0.1.0"
 description = "A Streamlit app to generate Kahoot quizzes from PDFs using the Gemini API."
 authors = [{ name = "Gemini", email = "no-reply@google.com" }]
-requires-python = ">=3.8"
+python = "^3.10"
 dependencies = [
     "streamlit",
     "google-genai",

@@ -1,32 +1,20 @@
-import os
 import streamlit as st
 import pypdf
 import io
 import google.genai as genai
+import os
 import json
-from dotenv import load_dotenv
-
-load_dotenv() # Load environment variables
 
 st.title("Kahoot Quiz Generator")
 
-# Retrieve API key based on deployment environment
-api_key = os.getenv("GEMINI_API_KEY")
-
-if not api_key:
-    try:
-        api_key = st.secrets["GEMINI_API_KEY"]
-    except Exception: # Catch any exception, including StreamlitSecretNotFoundError
-        pass
-
-# If not found in secrets or env, prompt user
-if not api_key:
-    st.sidebar.title("API Key")
-    api_key = st.sidebar.text_input("Enter your Gemini API Key", type="password")
-
-if not api_key:
-    st.error("Gemini API Key is required to proceed. Please enter it in the sidebar or configure it via st.secrets or .env file.")
-    st.stop() # Stop execution if API key is not available
+# Add a section for API Key instructions
+st.sidebar.title("API Key Configuration")
+st.sidebar.info(
+    "Please set your Gemini API Key as an environment variable named `GEMINI_API_KEY` "
+    "or use Streamlit's secrets management (`.streamlit/secrets.toml`).\n\n"
+    "Example for local environment variable:\n"
+    "`export GEMINI_API_KEY='YOUR_API_KEY'`"
+)
 
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
@@ -39,12 +27,14 @@ if uploaded_file is not None:
     
     st.text_area("Extracted Text", text, height=150)
     
-    if api_key:
+    # Check if API Key is available from environment or secrets
+    # The genai library will automatically pick it up if set correctly.
+    # We still need to check if it's there before attempting to generate.
+    if os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY"):
         if st.button("Generate Quiz"):
-            genai.configure(api_key=api_key)
+            # genai.configure(api_key=api_key) # This line caused AttributeError
+            # The API key should be picked up automatically from the environment or st.secrets
             
-            # The model name should be 'gemini-1.5-pro' as per the spec,
-            # but using 'models/gemini-2.5-pro' based on available models list.
             model = genai.GenerativeModel('models/gemini-2.5-pro')
             
             prompt = f"""

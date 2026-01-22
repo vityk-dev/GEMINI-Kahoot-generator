@@ -72,7 +72,7 @@ if uploaded_file is not None:
             
             with st.spinner("Generating quiz..."):
                 response = client.models.generate_content(
-                    model='models/gemini-2.5-pro', 
+                    model='models/gemini-2.5-flash', 
                     contents=prompt
                 )
                 

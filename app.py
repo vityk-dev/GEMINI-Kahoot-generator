@@ -66,6 +66,9 @@ selected_language = st.sidebar.selectbox(
     index=1 # Default to English
 )
 
+st.sidebar.divider()
+st.sidebar.markdown("<p style='text-align: center;'>Created by Wiktor Goszczyński</p>", unsafe_allow_html=True)
+
 # --- 3. Main Application ---
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 

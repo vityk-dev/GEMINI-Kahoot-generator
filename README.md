@@ -3,6 +3,7 @@
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://gemini-kahoot.streamlit.app/)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![Gemini](https://img.shields.io/badge/AI-Gemini_1.5-8E75B2?logo=google&logoColor=white)
+![License](https://img.shields.io/github/license/vityk-dev/GEMINI-Kahoot-generator?style=flat-square&color=blue)
 
 > **Transform your PDF study materials into engaging Kahoot games in seconds using Google Gemini AI.**
 

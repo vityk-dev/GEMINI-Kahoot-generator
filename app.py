@@ -59,6 +59,13 @@ num_questions = st.sidebar.number_input(
     value=10
 )
 
+# Output Language selector
+selected_language = st.sidebar.selectbox(
+    "Output Language",
+    ['English', 'Polish', 'Spanish', 'German', 'French'],
+    index=1 # Default to English
+)
+
 # --- 3. Main Application ---
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
@@ -93,7 +100,8 @@ if uploaded_file is not None:
 
             **Instructions and Constraints:**
             1.  **Number of Questions:** You MUST generate exactly {num_questions} quiz questions.
-            2.  **Analyze the text:** Read the provided text and create questions that test understanding of the key concepts.
+            2.  **Output Language:** Generate the questions and answers strictly in {selected_language} language, regardless of the source text language.
+            3.  **Analyze the text:** Read the provided text and create questions that test understanding of the key concepts.
             2.  **Question Style:** Questions should be clear and concise.
             3.  **Character Limits:**
                 - The 'question' must be a maximum of 120 characters.

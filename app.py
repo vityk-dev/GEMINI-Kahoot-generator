@@ -116,13 +116,14 @@ if 'quiz_data' in st.session_state:
         start_row = 9
         for i, question_data in enumerate(st.session_state.quiz_data):
             row = start_row + i
-            sheet[f"A{row}"] = question_data.get("question", "")
-            sheet[f"B{row}"] = question_data.get("answer1", "")
-            sheet[f"C{row}"] = question_data.get("answer2", "")
-            sheet[f"D{row}"] = question_data.get("answer3", "")
-            sheet[f"E{row}"] = question_data.get("answer4", "")
-            sheet[f"F{row}"] = question_data.get("time_limit", 20)
-            sheet[f"G{row}"] = question_data.get("correct_answer", 1)
+            sheet[f"A{row}"] = i + 1  # Question Number
+            sheet[f"B{row}"] = question_data.get("question", "")
+            sheet[f"C{row}"] = question_data.get("answer1", "")
+            sheet[f"D{row}"] = question_data.get("answer2", "")
+            sheet[f"E{row}"] = question_data.get("answer3", "")
+            sheet[f"F{row}"] = question_data.get("answer4", "")
+            sheet[f"G{row}"] = question_data.get("time_limit", 20)
+            sheet[f"H{row}"] = question_data.get("correct_answer", 1)
 
         # Save the workbook to a BytesIO object
         excel_buffer = io.BytesIO()

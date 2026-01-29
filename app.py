@@ -73,6 +73,12 @@ selected_language = st.sidebar.selectbox(
     index=1 # Default to English
 )
 
+# Custom Instructions
+custom_focus = st.sidebar.text_input("Custom Focus / Instructions")
+
+# Include True/False
+include_true_false = st.sidebar.checkbox("Include True/False questions")
+
 st.sidebar.divider()
 st.sidebar.markdown("<p style='text-align: center;'>Created by Wiktor Goszczyński</p>", unsafe_allow_html=True)
 
@@ -112,6 +118,29 @@ if uploaded_file is not None:
                     - **Context:** REINFORCE: Do NOT use phrases like 'According to the text'. Questions must be direct facts.
                 """
             
+            # Custom Focus Instructions
+            custom_instructions_prompt = ""
+            if custom_focus:
+                custom_instructions_prompt = f"""
+                - **CUSTOM USER INSTRUCTIONS (PRIORITY #1):**
+                    - {custom_focus}
+                    - These instructions override other style rules if there is a conflict.
+                """
+            
+            # True/False Instructions
+            true_false_prompt = ""
+            if include_true_false:
+                true_false_prompt = f"""
+                - **TRUE/FALSE LOGIC:**
+                    - Mix standard multiple choice questions with True/False questions.
+                    - **CRITICAL FORMATTING FOR TRUE/FALSE:** 
+                        - 'answer1' MUST be the translated word for 'True' (in {selected_language}).
+                        - 'answer2' MUST be the translated word for 'False' (in {selected_language}).
+                        - 'answer3' MUST be an empty string "".
+                        - 'answer4' MUST be an empty string "".
+                        - 'correct_answer' MUST be 1 (for True) or 2 (for False).
+                """
+
             prompt = f"""
             You are an expert in creating engaging quizzes. Based on the following text from a PDF document, please generate a series of {num_questions} multiple-choice quiz questions.
 
@@ -126,6 +155,8 @@ if uploaded_file is not None:
             3.  **Analyze the text:** Read the provided text and create questions that test understanding of the key concepts.
             4.  **Difficulty Level:** Adapt the complexity of questions based on the selected '{difficulty_level}'.
             {child_mode_instructions}
+            {custom_instructions_prompt}
+            {true_false_prompt}
             5.  **Question Context:** **CRITICAL RULE**: The questions must be self-contained contextually. STRICTLY FORBID phrases like 'Based on the text', 'According to the passage', 'As mentioned in the document', or 'In the text'. The question implies the context is known facts, not a reading comprehension test.
             6.  **Question Style:** Questions should be clear and concise.
             7.  **Character Limits:**
@@ -156,7 +187,8 @@ if uploaded_file is not None:
                         contents=prompt
                     )
                     
-                    st.text_area("Raw AI Response", response.text, height=300) 
+                    with st.expander("View Raw JSON (Debug)"):
+                        st.code(response.text, language='json')
                     
                     # 3. Parse Response
                     json_response = response.text.strip()
@@ -206,8 +238,14 @@ if 'quiz_data' in st.session_state:
             sheet[f"B{row}"] = question_data.get("question", "")
             sheet[f"C{row}"] = question_data.get("answer1", "")
             sheet[f"D{row}"] = question_data.get("answer2", "")
-            sheet[f"E{row}"] = question_data.get("answer3", "")
-            sheet[f"F{row}"] = question_data.get("answer4", "")
+            
+            # Handle potential empty strings for True/False questions (avoid None)
+            ans3 = question_data.get("answer3")
+            ans4 = question_data.get("answer4")
+            
+            sheet[f"E{row}"] = ans3 if ans3 is not None else ""
+            sheet[f"F{row}"] = ans4 if ans4 is not None else ""
+            
             sheet[f"G{row}"] = question_data.get("time_limit", 30)
             sheet[f"H{row}"] = question_data.get("correct_answer", 1)
 

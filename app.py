@@ -167,6 +167,14 @@ if uploaded_file is not None:
                         json_response = json_response[:-3]
                         
                     quiz_data = json.loads(json_response)
+                    
+                    # --- NEW LOGIC: Enforce Time Limits Immediately ---
+                    for q in quiz_data:
+                        if "Child" in difficulty_level:
+                            q["time_limit"] = 60
+                        else:
+                            q["time_limit"] = 30
+                            
                     st.session_state.quiz_data = quiz_data
 
                 except json.JSONDecodeError:
